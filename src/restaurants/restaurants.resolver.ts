@@ -13,7 +13,7 @@ export class RestaurantResolver {
     return this.restaurantService.getAll();
   }
   @Mutation((returns) => Boolean) //왜 여기서 import가 안되었을까?
-  async createRestaurant(@Args() createRestaurantDto: createRestaurantDto): Promise<boolean> {
+  async createRestaurant(@Args('input') createRestaurantDto: createRestaurantDto): Promise<boolean> {
     try {
       await this.restaurantService.createRestaurant(createRestaurantDto);
       return true;
