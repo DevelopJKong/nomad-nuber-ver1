@@ -21,7 +21,7 @@ export class RestaurantService {
     const newRestaurant = this.restaurants.create(createRestaurantDto);
     return this.restaurants.save(newRestaurant);
   }
-  updateRestaurant({id,data}:UpdateRestaurantDto) {
-    return this.restaurants.update(id,{...data});
+  updateRestaurant({ id, data }: UpdateRestaurantDto) {
+    return this.restaurants.update(id, { ...data });
   }
 }

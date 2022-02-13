@@ -24,7 +24,7 @@ export class RestaurantResolver {
     }
   }
 
-  @Mutation(returns => Boolean)
+  @Mutation((returns) => Boolean)
   async updateRestaurant(
     @Args('input') updateRestaurantDto: UpdateRestaurantDto,
   ) {
