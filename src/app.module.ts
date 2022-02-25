@@ -1,3 +1,4 @@
+import { User } from './users/entities/user.entity';
 import { Module } from '@nestjs/common';
 import * as Joi from 'joi'; // 타입 스크립트로 되어 있지 않은 패키지는 이렇게 import를 해와야 한다
 import { ConfigModule } from '@nestjs/config';
@@ -6,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 import { Restaurant } from './restaurants/entities/restuarant.entity';
+import { UsersModule } from './users/users.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -34,9 +37,10 @@ import { Restaurant } from './restaurants/entities/restuarant.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [Restaurant],
+      entities: [User],
     }),
-    RestaurantsModule,
+    UsersModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
