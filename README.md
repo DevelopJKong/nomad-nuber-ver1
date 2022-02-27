@@ -3,7 +3,7 @@
 The Backend of Nuber Eats Clone
 
 
-## User Model:
+## User Entity:
 - id
 - createdAt
 - updatedAt
