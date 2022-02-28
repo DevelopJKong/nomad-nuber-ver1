@@ -5,7 +5,10 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity } from 'typeorm';
+import { BeforeInsert, Column, Entity } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { InternalServerErrorException } from '@nestjs/common';
+import { IsEmail, isEmail, IsEnum, IsString } from 'class-validator';
 
 enum UserRole {
   Client,
@@ -20,14 +23,36 @@ registerEnumType(UserRole, { name: 'UserRole' });
 @Entity()
 export class User extends CoreEntity {
   @Field((type) => String)
+  @IsEmail()
   @Column()
   email: string;
 
   @Field((type) => String)
   @Column()
+  @IsString()
   password: string;
 
-  @Field(type => UserRole)
+  @Field((type) => UserRole)
   @Column({ type: 'enum', enum: UserRole })
+  @IsEnum(UserRole)
   role: UserRole;
+
+  @BeforeInsert()
+  async hashPassword(): Promise<void> {
+    try {
+      this.password = await bcrypt.hash(this.password, 10);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
+  }
+  async checkPassword(aPassword: string): Promise<boolean> {
+    try {
+      const ok = await bcrypt.compare(aPassword, this.password);
+      return ok;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException();
+    }
+  }
 }
