@@ -13,6 +13,7 @@ export class JwtMiddleware implements NestMiddleware {
       if(typeof decoded === "object" && decoded.hasOwnProperty('id')) {
         try {
             const user = await this.usersService.findById(decoded['id']);
+            req['user'] = user;
         } catch (error) {
             
         }
