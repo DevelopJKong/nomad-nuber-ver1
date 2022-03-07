@@ -1,4 +1,4 @@
-import { MutationOuput } from './../../common/dtos/output.dto';
+import { CoreOutput } from './../../common/dtos/output.dto';
 import { PickType, ObjectType, Field, InputType } from '@nestjs/graphql';
 import { User } from './../entities/user.entity';
 
@@ -10,4 +10,4 @@ export class CreateAccountInput extends PickType(User, [
 ]) {}
 
 @ObjectType()
-export class CreateAccountOutput extends MutationOuput {}
+export class CreateAccountOutput extends CoreOutput {}

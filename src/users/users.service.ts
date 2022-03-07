@@ -1,3 +1,4 @@
+import { EditProfileInput } from './dtos/edit-profile';
 import { JwtService } from './../jwt/jwt.service';
 import { LoginInput } from './dtos/login.dto';
 import { CreateAccountInput } from './dtos/create-account.dto';
@@ -13,9 +14,8 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
     private readonly config: ConfigService,
-    private readonly jwtService:JwtService
-  ) {
-  }
+    private readonly jwtService: JwtService,
+  ) {}
 
   async createAccount({
     email,
@@ -68,5 +68,16 @@ export class UserService {
   }
   async findById(id: number): Promise<User> {
     return this.users.findOne({ id });
+  }
+  async editProfile(userId: number, { email,password}: EditProfileInput) {
+    const user = await this.users.findOne(userId);
+    if(email) {
+      user.email = email
+    }
+
+    if(password) {
+      user.password = password
+    }
+    return this.users.save(user);
   }
 }
