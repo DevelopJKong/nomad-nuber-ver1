@@ -1,3 +1,4 @@
+import { Verification } from './restaurants/entities/verification.entity';
 import { User } from './users/entities/user.entity';
 import {
   MiddlewareConsumer,
@@ -44,7 +45,7 @@ import { AuthModule } from './auth/auth.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: true,
-      entities: [User],
+      entities: [User,Verification],
     }),
     UsersModule,
     JwtModule.forRoot({

@@ -11,11 +11,9 @@ import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
-
 @Resolver(of => User)
 export class UserResolver {
   constructor(private readonly usersService: UserService) {}
-
   @Mutation(returns => CreateAccountOutput)
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
@@ -52,7 +50,6 @@ export class UserResolver {
   me(@AuthUser() authUser: User) {
     return authUser;
   }
-
   @UseGuards(AuthGuard)
   @Query(returns => UserProfileOutput)
   async userProfile(
@@ -74,21 +71,23 @@ export class UserResolver {
       };
     }
   }
-
   @UseGuards(AuthGuard)
-  @Mutation(returns =>EditProfileOutput)
-  async editProfile(@AuthUser() authUser: User,@Args('input') editProfileInput: EditProfileInput):Promise<EditProfileOutput> {
+  @Mutation(returns => EditProfileOutput)
+  async editProfile(
+    @AuthUser() authUser: User,
+    @Args('input') editProfileInput: EditProfileInput,
+  ): Promise<EditProfileOutput> {
     try {
-      await this.usersService.editProfile(authUser.id,editProfileInput);
+      await this.usersService.editProfile(authUser.id, editProfileInput);
+
       return {
-        ok: true
-      }
+        ok: true,
+      };
     } catch (error) {
       return {
-        ok:false,
-        error
-      }
+        ok: false,
+        error,
+      };
     }
   }
-
 }

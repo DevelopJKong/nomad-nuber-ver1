@@ -1,4 +1,5 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
+
 @ObjectType()
 export class CoreOutput {
   @Field((type) => String, { nullable: true })
