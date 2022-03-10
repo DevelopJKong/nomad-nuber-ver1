@@ -1,3 +1,4 @@
+import { VerifyEmailOutput, VerifyEmailInput } from './dtos/verify-email.dto';
 import { EditProfileOutput, EditProfileInput } from './dtos/edit-profile';
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
@@ -88,6 +89,22 @@ export class UserResolver {
         ok: false,
         error,
       };
+    }
+  }
+
+
+  @Mutation(returns => VerifyEmailOutput)
+  async verifyEmail(@Args('input') { code }: VerifyEmailInput): Promise<VerifyEmailOutput> {
+    try {
+      await this.usersService.verifyEmail(code);
+      return {
+        ok:true
+      }
+    } catch (error) {
+      return {
+        ok: false,
+        error
+      }
     }
   }
 }
