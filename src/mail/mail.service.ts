@@ -1,4 +1,4 @@
-import { MailModuleOptions, EmailVar } from './mail.interface';
+import { MailModuleOptions, EmailVar } from './mail.interfaces';
 import { CONFIG_OPTIONS } from './../common/common.constants';
 import { Inject, Injectable } from '@nestjs/common';
 import got from 'got';
@@ -8,7 +8,13 @@ import * as FormData from 'form-data';
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {}
+  ) {
+    this.sendEmail('testing','test',[]).then(()=>{
+        console.log("Message sent");
+      }).catch((error)=>{
+        console.log(error.response.body);
+      });
+  }
   private async sendEmail(
     subject: string,
     template: string,
