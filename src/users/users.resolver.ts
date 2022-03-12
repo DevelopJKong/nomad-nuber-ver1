@@ -1,7 +1,6 @@
-import { VerifyEmailOutput, VerifyEmailInput } from './dtos/verify-email.dto';
 import { EditProfileOutput, EditProfileInput } from './dtos/edit-profile';
 import { UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import {
@@ -10,25 +9,23 @@ import {
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
 import { User } from './entities/user.entity';
 import { UserService } from './users.service';
-@Resolver((of) => User)
+@Resolver(of => User)
 export class UserResolver {
   constructor(private readonly usersService: UserService) {}
-  @Mutation((returns) => CreateAccountOutput)
+  @Mutation(returns => CreateAccountOutput)
   async createAccount(
     @Args('input') createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountOutput> {
     return this.usersService.createAccount(createAccountInput);
   }
-  
-  @Mutation((returns) => LoginOutput)
+  @Mutation(returns => LoginOutput)
   async login(@Args('input') loginInput: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(loginInput);
   }
-
-
-  @Query((returns) => User)
+  @Query(returns => User)
   @UseGuards(AuthGuard)
   me(@AuthUser() authUser: User) {
     return authUser;
@@ -41,16 +38,14 @@ export class UserResolver {
     return this.usersService.findById(userProfileInput.userId);
   }
 
-  @UseGuards(AuthGuard)
   @Mutation(returns => EditProfileOutput)
+  @UseGuards(AuthGuard)
   async editProfile(
-    @AuthUser() authUser: User,
+    @AuthUser() authUser: { ok: boolean, user: User },
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
-    return this.usersService.editProfile(authUser.id, editProfileInput);
+    return this.usersService.editProfile(authUser.user.id, editProfileInput);
   }
-
-
   @Mutation(returns => VerifyEmailOutput)
   verifyEmail(
     @Args('input') { code }: VerifyEmailInput,
