@@ -9,17 +9,15 @@ export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
   ) {
-    this.sendEmail('testing','test',[]).then(()=>{
-        console.log("Message sent");
-      }).catch((error)=>{
+    this.sendEmail('testing', 'test', [])
+      .then(() => {
+        console.log('Message sent');
+      })
+      .catch((error) => {
         console.log(error.response.body);
       });
   }
-  private async sendEmail(
-    subject: string,
-    template: string,
-    emailVars: EmailVar[],
-  ){
+  async sendEmail(subject: string, template: string, emailVars: EmailVar[]) {
     const form = new FormData();
     form.append(
       'from',
@@ -28,7 +26,7 @@ export class MailService {
     form.append('to', `jeongkong000@naver.com`);
     form.append('subject', subject);
     form.append('template', template);
-    emailVars.forEach(eVar => form.append(`v:${eVar.key}`, eVar.value));
+    emailVars.forEach((eVar) => form.append(`v:${eVar.key}`, eVar.value));
     try {
       await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
         method: 'POST',
