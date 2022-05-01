@@ -8,16 +8,8 @@ import * as FormData from 'form-data';
 export class MailService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {
-    this.sendEmail('testing', 'test', [])
-      .then(() => {
-        console.log('Message sent');
-      })
-      .catch((error) => {
-        console.log(error.response.body);
-      });
-  }
-  async sendEmail(subject: string, template: string, emailVars: EmailVar[]) {
+  ) {}
+  async sendEmail(subject: string, template: string, emailVars: EmailVar[]):Promise<boolean> {
     const form = new FormData();
     form.append(
       'from',
@@ -28,8 +20,7 @@ export class MailService {
     form.append('template', template);
     emailVars.forEach((eVar) => form.append(`v:${eVar.key}`, eVar.value));
     try {
-      await got(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
-        method: 'POST',
+      await got.post(`https://api.mailgun.net/v3/${this.options.domain}/messages`, {
         headers: {
           Authorization: `Basic ${Buffer.from(
             `api:${this.options.apiKey}`,
@@ -38,8 +29,9 @@ export class MailService {
 
         body: form,
       });
+      return true;
     } catch (error) {
-      console.log(error);
+      return false;
     }
   }
   sendVerificationEmail(email: string, code: string) {
