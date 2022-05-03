@@ -1,18 +1,18 @@
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile';
 import { Verification } from './../restaurants/entities/verification.entity';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MailService } from './../mail/mail.service';
+import { VerifyEmailOutput } from './dtos/verify-email.dto';
+import { UserProfileOutput } from './dtos/user-profile.dto';
+import { JwtService } from './../jwt/jwt.service';
+import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
-import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
-import { JwtService } from 'src/jwt/jwt.service';
-import { VerifyEmailOutput } from './dtos/verify-email.dto';
-import { UserProfileOutput } from './dtos/user-profile.dto';
-import { MailService } from 'src/mail/mail.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -21,7 +21,7 @@ export class UserService {
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailService,
+    private readonly emailService: MailService,
   ) {}
 
   async createAccount({
@@ -29,10 +29,17 @@ export class UserService {
     password,
     role,
   }: CreateAccountInput): Promise<CreateAccountOutput> {
+    //check new user
+    //create user & hash password
     try {
       const exists = await this.users.findOne({ email });
+
       if (exists) {
-        return { ok: false, error: 'There is a user with that email already' };
+        //make error
+        return {
+          ok: false,
+          error: 'There is a user with that email already',
+        };
       }
       const user = await this.users.save(
         this.users.create({ email, password, role }),
@@ -42,13 +49,21 @@ export class UserService {
           user,
         }),
       );
-      this.mailService.sendVerificationEmail(user.email, verification.code);
-      return { ok: true };
-    } catch (e) {
-      return { ok: false, error: "Couldn't create account" };
+
+      this.emailService.sendVerificationEmail(user.email, verification.code);
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error: "Couldn't create account",
+      };
     }
   }
+
   async login({ email, password }: LoginInput): Promise<LoginOutput> {
+    // make a JWT and give it to the user
     try {
       const user = await this.users.findOne(
         { email },
@@ -68,7 +83,7 @@ export class UserService {
         };
       }
 
-      const token = this.jwtService.sign(user.id);
+      const token = this.jwtService.sign({ id: user.id });
       return {
         ok: true,
         token,
@@ -76,21 +91,24 @@ export class UserService {
     } catch (error) {
       return {
         ok: false,
-        error:"Can't log user in.",
+        error,
       };
     }
   }
   async findById(id: number): Promise<UserProfileOutput> {
     try {
       const user = await this.users.findOneOrFail({ id });
+      if (user) {
         return {
           ok: true,
-          user,
+          user: user,
         };
+      }
     } catch (error) {
       return { ok: false, error: 'User Not Found' };
     }
   }
+
   async editProfile(
     userId: number,
     { email, password }: EditProfileInput,
@@ -103,7 +121,7 @@ export class UserService {
         const verification = await this.verifications.save(
           this.verifications.create({ user }),
         );
-        this.mailService.sendVerificationEmail(user.email, verification.code);
+        this.emailService.sendVerificationEmail(user.email, verification.code);
       }
       if (password) {
         user.password = password;
@@ -116,6 +134,7 @@ export class UserService {
       return { ok: false, error: 'Could not update profile.' };
     }
   }
+
   async verifyEmail(code: string): Promise<VerifyEmailOutput> {
     try {
       const verification = await this.verifications.findOne(
@@ -130,7 +149,7 @@ export class UserService {
       }
       return { ok: false, error: 'Verification not found.' };
     } catch (error) {
-      return { ok: false, error: 'Could not verify email.' };
+      return { ok: false, error };
     }
   }
 }

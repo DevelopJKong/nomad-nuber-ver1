@@ -6,5 +6,5 @@ export class CoreOutput {
   error?: string;
 
   @Field((type) => Boolean)
-  ok: boolean;
+  ok?: boolean;
 }

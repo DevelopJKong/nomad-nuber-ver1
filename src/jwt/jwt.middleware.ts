@@ -1,7 +1,8 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { UserService } from 'src/users/users.service';
+import { UserService } from './../users/users.service';
 import { JwtService } from './jwt.service';
+
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
   constructor(
@@ -11,13 +12,15 @@ export class JwtMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     if ('x-jwt' in req.headers) {
       const token = req.headers['x-jwt'];
-      try {
-        const decoded = this.jwtService.verify(token.toString());
-        if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+      const decoded = this.jwtService.verify(token.toString());
+      if (typeof decoded === 'object' && decoded.hasOwnProperty('id')) {
+        try {
           const user = await this.userService.findById(decoded['id']);
-          req['user'] = user;
+          req['user'] = user; // 이거는 req.user 왜 사용하지 못하는걸까?
+        } catch (error) {
+            console.log(error)
         }
-      } catch (e) {}
+      }
     }
     next();
   }
