@@ -1,5 +1,5 @@
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile';
-import { Verification } from './../restaurants/entities/verification.entity';
+import { Verification } from './entities/verification.entity';
 import { MailService } from './../mail/mail.service';
 import { VerifyEmailOutput } from './dtos/verify-email.dto';
 import { UserProfileOutput } from './dtos/user-profile.dto';

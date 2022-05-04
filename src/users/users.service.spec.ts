@@ -1,6 +1,6 @@
 import { MailService } from './../mail/mail.service';
 import { JwtService } from './../jwt/jwt.service';
-import { Verification } from './../restaurants/entities/verification.entity';
+import { Verification } from './entities/verification.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Test } from '@nestjs/testing';

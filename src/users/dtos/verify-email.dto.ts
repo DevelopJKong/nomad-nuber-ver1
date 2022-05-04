@@ -1,4 +1,4 @@
-import { Verification } from './../../restaurants/entities/verification.entity';
+import { Verification } from './../entities/verification.entity';
 import { InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 

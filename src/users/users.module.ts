@@ -1,4 +1,4 @@
-import { Verification } from './../restaurants/entities/verification.entity';
+import { Verification } from './entities/verification.entity';
 import { UserService } from './users.service';
 import { UserResolver } from './users.resolver';
 import { User } from './entities/user.entity';
