@@ -1,4 +1,4 @@
-import { Verification } from './../src/restaurants/entities/verification.entity';
+import { Verification } from '../src/users/entities/verification.entity';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
