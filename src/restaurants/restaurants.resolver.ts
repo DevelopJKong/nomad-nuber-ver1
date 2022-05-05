@@ -1,3 +1,5 @@
+import { User } from './../users/entities/user.entity';
+import { AuthUser } from './../auth/auth-user.decorator';
 import { CreateAccountOutput } from './../users/dtos/create-account.dto';
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
 import { CreateRestaurantInput } from './dtos/create-restaurant.dto';
@@ -13,7 +15,7 @@ export class RestaurantResolver {
     @AuthUser() authUser:User,
     @Args('input') createRestaurantInput: CreateRestaurantInput,
   ): Promise<CreateAccountOutput> {
-    return this.restaurantService.createRestaurant(createRestaurantInput);
+    return this.restaurantService.createRestaurant(authUser,createRestaurantInput);
   }
 
 

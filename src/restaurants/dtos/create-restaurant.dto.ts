@@ -1,10 +1,16 @@
 import { CoreOutput } from './../../common/dtos/output.dto';
 import { Restaurant } from './../entities/restuarant.entity';
-import { InputType, OmitType, ObjectType } from '@nestjs/graphql';
+import { InputType, PickType, ObjectType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreateRestaurantInput extends OmitType(Restaurant, ['id','category']) {
-  // 그러게? 왜 name 옆 속성은 소문자고 리턴 타입은 대문자지?
+export class CreateRestaurantInput extends PickType(Restaurant, [
+  'name',
+  'coverImg',
+  'address',
+]) {
+  @Field(type => String)
+  categoryName:string;
+
 }
 
 @ObjectType()
