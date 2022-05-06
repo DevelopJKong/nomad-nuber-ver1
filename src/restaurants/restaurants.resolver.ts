@@ -1,4 +1,5 @@
-import { User } from './../users/entities/user.entity';
+import { Role } from 'src/auth/role.decorator';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { AuthUser } from './../auth/auth-user.decorator';
 import { CreateAccountOutput } from './../users/dtos/create-account.dto';
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql';
@@ -10,7 +11,8 @@ import { RestaurantService } from './restaurants.service';
 export class RestaurantResolver {
   constructor(private readonly restaurantService: RestaurantService) {}
 
-  @Mutation((returns) => CreateAccountOutput) //왜 여기서 import가 안되었을까?
+  @Mutation((returns) => CreateAccountOutput) 
+  @Role(['Owner'])
   async createRestaurant(
     @AuthUser() authUser:User,
     @Args('input') createRestaurantInput: CreateRestaurantInput,
