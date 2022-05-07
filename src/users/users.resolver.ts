@@ -1,3 +1,4 @@
+import { Role } from './../auth/role.decorator';
 import { EditProfileOutput, EditProfileInput } from './dtos/edit-profile';
 import { VerifyEmailOutput, VerifyEmailInput } from './dtos/verify-email.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
@@ -30,21 +31,21 @@ export class UserResolver {
   }
 
   @Query((returns) => User)
-  @UseGuards(AuthGuard)
+  @Role(["Any"])
   me(@AuthUser() authUser: User) {
     return authUser;
   }
 
   @Query((returns) => UserProfileOutput)
-  @UseGuards(AuthGuard)
+  @Role(["Any"])
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
     return this.usersService.findById(userProfileInput.userId); // try - catch 문 전부 제거
   }
 
-  @UseGuards(AuthGuard)
   @Mutation((returns) => EditProfileOutput)
+  @Role(["Any"])
   async editProfile(
     @AuthUser() authUser: User,
     @Args('input') editProfileInput: EditProfileInput,
@@ -52,10 +53,8 @@ export class UserResolver {
     return this.usersService.editProfile(authUser.id, editProfileInput);
   }
 
-
-
   @Mutation((type) => VerifyEmailOutput)
- verifyEmail(
+  verifyEmail(
     @Args('input') { code }: VerifyEmailInput,
   ): Promise<VerifyEmailOutput> {
     return this.usersService.verifyEmail(code);

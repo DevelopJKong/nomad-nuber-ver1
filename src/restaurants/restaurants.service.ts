@@ -15,7 +15,7 @@ export class RestaurantService {
     @InjectRepository(Restaurant)
     private readonly restaurants: Repository<Restaurant>,
     @InjectRepository(Category)
-    private readonly categories: Repository<Category>
+    private readonly categories: Repository<Category>,
   ) {}
 
   async createRestaurant(
@@ -26,23 +26,27 @@ export class RestaurantService {
       //create 와 save 차이점을 제대로 알아두어야 할거 같다
       const newRestaurant = this.restaurants.create(createRestaurantInput);
       newRestaurant.owner = owner;
-      const categoryName = createRestaurantInput.categoryName.trim().toLowerCase();
-      const categorySlug = categoryName.replace(/ /g, "-");
-      let category = await this.categories.findOne( { slug: categorySlug} );
+      const categoryName = createRestaurantInput.categoryName
+        .trim()
+        .toLowerCase();
+      const categorySlug = categoryName.replace(/ /g, '-');
+      let category = await this.categories.findOne({ slug: categorySlug });
 
-      if(!category) {
-        category = await this.categories.save(this.categories.create( { slug: categorySlug,name:categoryName}));
+      if (!category) {
+        category = await this.categories.save(
+          this.categories.create({ slug: categorySlug, name: categoryName }),
+        );
       }
       newRestaurant.category = category;
       await this.restaurants.save(newRestaurant);
       return {
-        ok:true
-      }
+        ok: true,
+      };
     } catch (error) {
       return {
-        ok:false,
-        error: 'Could not create restaurants'
-      }
+        ok: false,
+        error: 'Could not create restaurants',
+      };
     }
   }
 }
