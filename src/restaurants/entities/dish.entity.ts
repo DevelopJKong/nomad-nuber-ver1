@@ -4,6 +4,18 @@ import { Field, ObjectType, InputType } from '@nestjs/graphql';
 import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { CoreEntity } from '../../common/entities/core.entity';
 
+@ObjectType()
+class DishOption {
+  @Field((type) => String)
+  name: string;
+
+  @Field((type) => [String], { nullable: true })
+  choices?: string[];
+
+  @Field((type) => Number)
+  extra: number;
+}
+
 @InputType('DishInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
@@ -37,4 +49,8 @@ export class Dish extends CoreEntity {
 
   @RelationId((dish: Dish) => dish.restaurant)
   restaurantId: number;
+
+  @Field((type) => [DishOption], { nullable: false })
+  @Column({ type: 'json', nullable: true })
+  options?: DishOption[];
 }
