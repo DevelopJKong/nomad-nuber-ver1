@@ -1,3 +1,4 @@
+import { Order } from './../../orders/entities/order.entity';
 import { Restaurant } from './../../restaurants/entities/restuarant.entity';
 import {
   Field,
@@ -12,14 +13,14 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum, IsString, IsBoolean } from 'class-validator';
 
 export enum UserRole {
-  Client = "Client",
-  Owner = "Owner",
-  Delivery = "Delivery",
+  Client = 'Client',
+  Owner = 'Owner',
+  Delivery = 'Delivery',
 }
 
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType('UserInputType',{ isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
@@ -43,10 +44,18 @@ export class User extends CoreEntity {
   @IsBoolean()
   verified: boolean;
 
-  @Field(type => [Restaurant])
+  @Field((type) => [Restaurant])
   @OneToMany((type) => Restaurant, (restaurant) => restaurant.category)
   restaurants: Restaurant[];
 
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.customer)
+  orders: Order[];
+
+  
+  @Field((type) => [Order])
+  @OneToMany((type) => Order, (order) => order.customer)
+  rides: Order[];
 
   @BeforeInsert()
   @BeforeUpdate()
