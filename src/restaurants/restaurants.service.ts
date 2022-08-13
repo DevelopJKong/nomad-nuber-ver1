@@ -1,3 +1,4 @@
+import { EditDishInput, EditDishOutput } from './dtos/edit-dish.dto';
 import { Dish } from './entities/dish.entity';
 import { RestaurantOutput, RestaurantInput } from './dtos/restaurant.dto';
 import { RestaurantsInput, RestaurantsOutput } from './dtos/restaurants.dto';
@@ -27,6 +28,7 @@ import {
   SearchRestaurantOutput,
 } from './dtos/search-restaurant.dto';
 import { CreateDishInput, CreateDishOutput } from './dtos/create-dish.dto';
+import { DeleteDishInput, DeleteDishOutput } from './dtos/delete-dish.dto';
 @Injectable()
 export class RestaurantService {
   constructor(
@@ -257,6 +259,9 @@ export class RestaurantService {
     try {
       const restaurant = await this.restaurants.findOne(
         createDishInput.restaurantId,
+        {
+          relations: ['restaurant'],
+        },
       );
 
       if (!restaurant) {
@@ -285,6 +290,83 @@ export class RestaurantService {
       return {
         ok: false,
         error: 'Could not create dish',
+      };
+    }
+  }
+
+  async editDish(
+    owner: User,
+    editDishInput: EditDishInput,
+  ): Promise<EditDishOutput> {
+    try {
+      const restaurant = await this.restaurants.findOne(editDishInput.dishId, {
+        relations: ['restaurant'],
+      });
+
+      if (!restaurant) {
+        return {
+          ok: false,
+          error: 'Restaurant not found',
+        };
+      }
+
+      if (owner.id !== restaurant.ownerId) {
+        return {
+          ok: false,
+          error: "You can't do that",
+        };
+      }
+
+      await this.dishes.save([
+        {
+          id: editDishInput.dishId,
+          ...editDishInput,
+        },
+      ]);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return {
+        ok: false,
+        error,
+      };
+    }
+  }
+
+  async deleteDish(
+    owner: User,
+    { dishId }: DeleteDishInput,
+  ): Promise<DeleteDishOutput> {
+    try {
+      const dish = await this.dishes.findOne(dishId, {
+        relations: ['restaurant'], // 비록 dish가 restaurant를 가지고 있지만 load를 해주는것이 좋다
+      });
+      if (!dish) {
+        return {
+          ok: false,
+          error: 'Dish not found',
+        };
+      }
+
+      if (dish.restaurant.ownerId !== owner.id) {
+        return {
+          ok: false,
+          error: "You can't do that",
+        };
+      }
+
+      await this.dishes.delete(dishId);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      // 만약에 여기서 (error)를 사용하고 하면 모든 에러가 왔을때 잡아줍니다
+      return {
+        ok: false,
+        error,
       };
     }
   }
