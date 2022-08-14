@@ -46,12 +46,12 @@ export class Order extends CoreEntity {
   restaurant: Restaurant;
 
   @Field((type) => [Dish])
-  @ManyToMany(type=> Dish)
+  @ManyToMany((type) => Dish)
   @JoinTable()
   dishes: Dish[];
 
-  @Field((type) => Float)
-  @Column()
+  @Field((type) => Float, { nullable: true })
+  @Column({ nullable: true })
   total: number;
 
   @Field((type) => OrderStatus)
