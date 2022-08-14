@@ -6,7 +6,7 @@ import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 
 @InputType('DishOptionInputType', { isAbstract: true })
 @ObjectType()
-class DishOption {
+export class DishOption {
   @Field((type) => String)
   name: string;
   @Field((type) => [String], { nullable: true })
