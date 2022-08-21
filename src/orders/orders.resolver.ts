@@ -1,3 +1,4 @@
+import { GetOrderOutput, GetOrderInput } from './dto/get-order.dto';
 import { CreateAccountOutput } from './../users/dtos/create-account.dto';
 import { User } from './../users/entities/user.entity';
 import { CreateOrderInput, CreateOrderOutput } from './dto/create-order.dto';
@@ -28,5 +29,14 @@ export class OrderResolver {
     @Args('input') getOrdersInput: GetOrdersInput,
   ):Promise<GetOrdersOutput> {
     return this.orderService.getOrders(user,getOrdersInput);
+  }
+
+  @Query((returns) => GetOrderOutput)
+  @Role(['Any'])
+  async getOrder(
+    @AuthUser() user: User,
+    @Args('input') getOrderInput: GetOrderInput,
+  ):Promise<GetOrdersOutput> {
+    return this.orderService.getOrder(user,getOrderInput);
   }
 }
