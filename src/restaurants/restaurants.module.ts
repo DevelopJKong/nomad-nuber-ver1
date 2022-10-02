@@ -11,7 +11,7 @@ import { RestaurantService } from './restaurants.service';
 import { Dish } from './entities/dish.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Restaurant, Dish,CategoryRepository])],
+  imports: [TypeOrmModule.forFeature([Restaurant, Dish, CategoryRepository])],
   providers: [
     DishResolver,
     RestaurantResolver,

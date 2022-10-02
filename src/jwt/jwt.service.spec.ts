@@ -36,7 +36,7 @@ describe('JwtService', () => {
 
   describe('sign', () => {
     it('should return a signed token', () => {
-      const token = service.sign(USER_ID);
+      const token = service.sign({USER_ID});
       expect(typeof token).toBe('string');
       expect(jwt.sign).toHaveBeenCalledTimes(USER_ID);
       expect(jwt.sign).toHaveBeenCalledWith({ id: USER_ID }, TEST_KEY);

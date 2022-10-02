@@ -2,7 +2,7 @@ import { MailService } from './../mail/mail.service';
 import { JwtService } from './../jwt/jwt.service';
 import { Verification } from './entities/verification.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User, UserRole } from './entities/user.entity';
 import { Test } from '@nestjs/testing';
 import { UserService } from './users.service';
 import { Repository } from 'typeorm';
@@ -17,7 +17,7 @@ const mockRepository = () => ({
 
 const mockJwtService = {
   sign: jest.fn(() => 'signed-token-baby'),
-  verify: jest.fn(),  
+  verify: jest.fn(),
 };
 
 const mockMailService = {
@@ -69,7 +69,7 @@ describe('UserService', () => {
     const createAccountArgs = {
       email: 'bs@email.com',
       password: 'bs.password',
-      role: 0,
+      role: UserRole.Client as UserRole,
     };
     it('should fail if user exists', async () => {
       usersRepository.findOne.mockResolvedValue({
